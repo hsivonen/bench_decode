@@ -7,6 +7,23 @@ extern crate test;
 use test::{Bencher, black_box};
 
 #[bench]
+fn bench_std_validation(b: &mut Bencher) {
+    let f = include_bytes!("../itunes.xml");
+    b.iter(|| {
+        let s = ::std::str::from_utf8(black_box(f)).unwrap();
+        black_box(s.len())
+    })
+}
+
+#[bench]
+fn bench_encoding_rs_validation(b: &mut Bencher) {
+    let f = include_bytes!("../itunes.xml");
+    b.iter(|| {
+        black_box(encoding_rs::Encoding::utf8_valid_up_to(black_box(f)))
+    })
+}
+
+#[bench]
 fn bench_std_str(b: &mut Bencher) {
     let f = include_bytes!("../itunes.xml");
     b.iter(|| {
